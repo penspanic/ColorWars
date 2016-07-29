@@ -6,6 +6,8 @@ public abstract class ProjectileBase : MonoBehaviour
     public float moveSpeed;
     public float damage;
 
+    Player shooter;
+
     protected virtual void Awake()
     {
 
@@ -14,6 +16,11 @@ public abstract class ProjectileBase : MonoBehaviour
     protected virtual void Update()
     {
 
+    }
+
+    public virtual void Init(Player player)
+    {
+        shooter = player;
     }
 
     protected virtual void OnLaunched()

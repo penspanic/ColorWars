@@ -7,95 +7,86 @@ public class Player : MonoBehaviour
     public float jumpPower;
     public float moveSpeed;
     public float maxSpeed;
-    public int colornum;
-    public int levelnum;
-    public float shotcooltime =0f;
-    public GameObject bulletweapon;
-    public GameObject boundballweapon;
-    public GameObject missileweapon;
-    public GameObject boomerangweapon;
-    public GameObject laserweapon;
     public Sprite red;
     public Sprite blue;
     public Sprite green;
     public Sprite yellow;
     public Sprite purple;
     private SpriteRenderer spriteRenderer;
-    // public GameObject[] colorshiftline;
     Rigidbody2D rgdBdy;
+    ProjectileManager projectileMgr;
+    TileManager tileMgr;
+    Transform shotTransform;
+
+    int playerNum;
 
     void Awake()
     {
         rgdBdy = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        projectileMgr = GameObject.FindObjectOfType<ProjectileManager>();
+        tileMgr = GameObject.FindObjectOfType<TileManager>();
+        shotTransform = transform.FindChild("Shot Position");
     }
 
+    public void SetNumber(int num)
+    {
+        playerNum = num;
+    }
+
+    public int GetNumber()
+    {
+        return playerNum;
+    }
+
+    public Transform GetShotTransform()
+    {
+        return shotTransform;
+    }
+
+    public void LeftKey()
+    {
+        rgdBdy.AddForce(Vector2.left * Time.deltaTime * moveSpeed);
+    }
+
+    public void RightKey()
+    {
+        rgdBdy.AddForce(Vector2.right * Time.deltaTime * moveSpeed);
+    }
+
+    public void JumpKeyDown()
+    {
+        Jump();
+    }
+
+    public void ShotKeyDown()
+    {
+        Shot();
+    }
 
     void Update()
     {
-        if(Input.GetKey(KeyCode.LeftArrow))
-        {
-            //transform.Translate(Vector2.left * moveSpeed * Time.deltaTime);
-            rgdBdy.AddForce(Vector2.left * Time.deltaTime * moveSpeed);
-        }
+        DirectionChange();
+        ChangeColor();
 
-        if(Input.GetKey(KeyCode.RightArrow))
-        {
-            //transform.Translate(Vector2.right * moveSpeed * Time.deltaTime);
-            rgdBdy.AddForce(Vector2.right * Time.deltaTime * moveSpeed);
-        }
+    }
 
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            Jump();
-        }
+    void DirectionChange()
+    {
+        if (Mathf.Abs(rgdBdy.velocity.x) < 0.5f)
+            return;
 
-        if(Input.GetKeyDown(KeyCode.Z))
+        if (rgdBdy.velocity.x >= 0)
         {
-            shot();
+            transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
         }
+        else
+            transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
+    }
 
-        if (transform.position.x < -3.84 && transform.position.x >= -6.4)
-        {
-            colornum = 1;
-            spriteRenderer.sprite = red;
-        }
-        if (transform.position.x < -1.28 && transform.position.x >= -3.84)
-        {
-            colornum = 2;
-            spriteRenderer.sprite = green;
-        }
-        if (transform.position.x < 1.28 && transform.position.x >= -1.28)
-        {
-            colornum = 3;
-            spriteRenderer.sprite = blue;
-        }
-        if (transform.position.x < 3.84 && transform.position.x >= 1.28)
-        {
-            colornum = 4;
-            spriteRenderer.sprite = yellow;
-        }
-        if (transform.position.x < 6.4 && transform.position.x >= 3.84)
-        {
-            colornum = 5;
-            spriteRenderer.sprite = purple;
-        }
-        if (transform.position.y < -1.2 && transform.position.y >= -3.6)
-        {
-            levelnum = 1;
-
-        }
-        if (transform.position.y < 1.2 && transform.position.y >= -1.2)
-        {
-            levelnum = 2;
-
-        }
-        if (transform.position.y < 3.6 && transform.position.y >= 1.2)
-        {
-            levelnum = 3;
-
-        }
-        shotcooltime += Time.deltaTime;
+    void ChangeColor()
+    {
+        spriteRenderer.sprite = GetSprite(tileMgr.GetColor(transform.position.x));
     }
 
     int jumpCount = 0;
@@ -117,33 +108,33 @@ public class Player : MonoBehaviour
         }
     }
 
-    void shot()
+    void Shot()
     {
-        if (shotcooltime >= 0.5f)
-        {
-            shotcooltime = 0.0f;
+        tileMgr.Shot(this);
+    }
 
-            if (colornum == 1) //bullet
-            {
-                bulletweapon.SendMessage("bulletshot");
-                
-            }
-            if (colornum == 2) //boundball
-            {
-               
-            }
-            if (colornum == 3) // missile
-            {
-                
-            }
-            if (colornum == 4) // boomerang
-            {
-               
-            }
-            if (colornum == 5) // laser
-            {
-                
-            }
+    Sprite GetSprite(string colorName)
+    {
+        switch(colorName)
+        {
+            case "Red":
+                return red;
+            case "Blue":
+                return blue;
+            case "Purple":
+                return purple;
+            case "Yellow":
+                return yellow;
+            case "Green":
+                return green;
         }
+        throw new UnityException();
+    }
+
+    public Vector2 GetDirVec()
+    {
+        if (rgdBdy.velocity.x >= 0)
+            return Vector2.right;
+        return Vector2.left;
     }
 }
