@@ -10,6 +10,11 @@ public class Player : MonoBehaviour
     public int colornum;
     public int levelnum;
     public float shotcooltime =0f;
+    public GameObject bulletweapon;
+    public GameObject boundballweapon;
+    public GameObject missileweapon;
+    public GameObject boomerangweapon;
+    public GameObject laserweapon;
     public Sprite red;
     public Sprite blue;
     public Sprite green;
@@ -114,69 +119,30 @@ public class Player : MonoBehaviour
 
     void shot()
     {
-        if (shotcooltime < 0.5f)
+        if (shotcooltime >= 0.5f)
         {
             shotcooltime = 0.0f;
 
             if (colornum == 1) //bullet
             {
-                if (levelnum == 1)
-                {
-                }
-                if (levelnum == 2)
-                {
-                }
-                if (levelnum == 3)
-                {
-                }
+                bulletweapon.SendMessage("bulletshot");
+                
             }
             if (colornum == 2) //boundball
             {
-                if (levelnum == 1)
-                {
-                }
-                if (levelnum == 2)
-                {
-                }
-                if (levelnum == 3)
-                {
-                }
+               
             }
             if (colornum == 3) // missile
             {
-                if (levelnum == 1)
-                {
-                }
-                if (levelnum == 2)
-                {
-                }
-                if (levelnum == 3)
-                {
-                }
+                
             }
             if (colornum == 4) // boomerang
             {
-                if (levelnum == 1)
-                {
-                }
-                if (levelnum == 2)
-                {
-                }
-                if (levelnum == 3)
-                {
-                }
+               
             }
-            if (colornum == 5) // layser
+            if (colornum == 5) // laser
             {
-                if (levelnum == 1)
-                {
-                }
-                if (levelnum == 2)
-                {
-                }
-                if (levelnum == 3)
-                {
-                }
+                
             }
         }
     }
