@@ -34,8 +34,8 @@ public class SceneFader : MonoBehaviour
     private void Awake()
     {
         // DontDestroyOnLoad(this.gameObject);
-        black = Resources.Load<Sprite>("Sprite/Black");
-        white = Resources.Load<Sprite>("Sprite/White");
+        black = Resources.Load<Sprite>("Black");
+        white = Resources.Load<Sprite>("White");
     }
 
     public void FillColor(Color color)
