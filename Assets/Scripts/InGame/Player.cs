@@ -7,7 +7,9 @@ public class Player : MonoBehaviour
     public float jumpPower;
     public float moveSpeed;
     public float maxSpeed;
-
+    public int colornum;
+    public int levelnum;
+    // public GameObject[] colorshiftline;
     Rigidbody2D rgdBdy;
 
     void Awake()
@@ -40,7 +42,47 @@ public class Player : MonoBehaviour
 
         }
 
-        Debug.Log(rgdBdy.velocity.x);
+        if (transform.position.x < -3.84 && transform.position.x >= -6.4)
+        {
+            colornum = 1;
+        
+        }
+        if (transform.position.x < -1.28 && transform.position.x >= -3.84)
+        {
+            colornum = 2;
+
+        }
+        if (transform.position.x < 1.28 && transform.position.x >= -1.28)
+        {
+            colornum = 3;
+
+        }
+        if (transform.position.x < 3.84 && transform.position.x >= 1.28)
+        {
+            colornum = 4;
+
+        }
+        if (transform.position.x < 6.4 && transform.position.x >= 3.84)
+        {
+            colornum = 5;
+
+        }
+        if (transform.position.y < -1.2 && transform.position.y >= -3.6)
+        {
+            levelnum = 1;
+
+        }
+        if (transform.position.y < 1.2 && transform.position.y >= -1.2)
+        {
+            levelnum = 2;
+
+        }
+        if (transform.position.y < 3.6 && transform.position.y >= 1.2)
+        {
+            levelnum = 3;
+
+        }
+        
     }
 
     int jumpCount = 0;
