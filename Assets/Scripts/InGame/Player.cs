@@ -9,12 +9,20 @@ public class Player : MonoBehaviour
     public float maxSpeed;
     public int colornum;
     public int levelnum;
+    public float shotcooltime =0f;
+    public Sprite red;
+    public Sprite blue;
+    public Sprite green;
+    public Sprite yellow;
+    public Sprite purple;
+    private SpriteRenderer spriteRenderer;
     // public GameObject[] colorshiftline;
     Rigidbody2D rgdBdy;
 
     void Awake()
     {
         rgdBdy = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
 
@@ -39,33 +47,33 @@ public class Player : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Z))
         {
-
+            shot();
         }
 
         if (transform.position.x < -3.84 && transform.position.x >= -6.4)
         {
             colornum = 1;
-        
+            spriteRenderer.sprite = red;
         }
         if (transform.position.x < -1.28 && transform.position.x >= -3.84)
         {
             colornum = 2;
-
+            spriteRenderer.sprite = green;
         }
         if (transform.position.x < 1.28 && transform.position.x >= -1.28)
         {
             colornum = 3;
-
+            spriteRenderer.sprite = blue;
         }
         if (transform.position.x < 3.84 && transform.position.x >= 1.28)
         {
             colornum = 4;
-
+            spriteRenderer.sprite = yellow;
         }
         if (transform.position.x < 6.4 && transform.position.x >= 3.84)
         {
             colornum = 5;
-
+            spriteRenderer.sprite = purple;
         }
         if (transform.position.y < -1.2 && transform.position.y >= -3.6)
         {
@@ -82,7 +90,7 @@ public class Player : MonoBehaviour
             levelnum = 3;
 
         }
-        
+        shotcooltime += Time.deltaTime;
     }
 
     int jumpCount = 0;
@@ -101,6 +109,75 @@ public class Player : MonoBehaviour
         if(other.gameObject.name == "Bottom")
         {
             jumpCount = 0;
+        }
+    }
+
+    void shot()
+    {
+        if (shotcooltime < 0.5f)
+        {
+            shotcooltime = 0.0f;
+
+            if (colornum == 1) //bullet
+            {
+                if (levelnum == 1)
+                {
+                }
+                if (levelnum == 2)
+                {
+                }
+                if (levelnum == 3)
+                {
+                }
+            }
+            if (colornum == 2) //boundball
+            {
+                if (levelnum == 1)
+                {
+                }
+                if (levelnum == 2)
+                {
+                }
+                if (levelnum == 3)
+                {
+                }
+            }
+            if (colornum == 3) // missile
+            {
+                if (levelnum == 1)
+                {
+                }
+                if (levelnum == 2)
+                {
+                }
+                if (levelnum == 3)
+                {
+                }
+            }
+            if (colornum == 4) // boomerang
+            {
+                if (levelnum == 1)
+                {
+                }
+                if (levelnum == 2)
+                {
+                }
+                if (levelnum == 3)
+                {
+                }
+            }
+            if (colornum == 5) // layser
+            {
+                if (levelnum == 1)
+                {
+                }
+                if (levelnum == 2)
+                {
+                }
+                if (levelnum == 3)
+                {
+                }
+            }
         }
     }
 }
