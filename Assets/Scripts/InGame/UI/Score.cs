@@ -33,5 +33,8 @@ public class Score : MonoBehaviour
             score1Image.sprite = scoredSprite;
         if (score == 2)
             score2Image.sprite = scoredSprite;
+
+        score1Image.SetNativeSize();
+        score2Image.SetNativeSize();
     }
 }

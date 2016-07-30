@@ -27,12 +27,12 @@ public class InputManager : MonoBehaviour
 
         // Player 1
 
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
         {
             player1.LeftKey();
         }
 
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
         {
             player1.RightKey();
         }
@@ -49,12 +49,12 @@ public class InputManager : MonoBehaviour
 
         // Player 2
 
-        if(Input.GetKey(KeyCode.J))
+        if(Input.GetKey(KeyCode.J) && !Input.GetKey(KeyCode.L))
         {
             player2.LeftKey();
         }
 
-        if(Input.GetKey(KeyCode.L))
+        if(Input.GetKey(KeyCode.L) && !Input.GetKey(KeyCode.J))
         {
             player2.RightKey();
         }

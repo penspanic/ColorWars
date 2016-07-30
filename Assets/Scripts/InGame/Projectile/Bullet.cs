@@ -48,7 +48,6 @@ public class Bullet : ProjectileBase
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log(other);
         if (other.gameObject.GetComponent<Player>() != null)
         {
             if (other.gameObject.GetComponent<Player>() != shooter)

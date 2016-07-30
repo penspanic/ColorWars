@@ -37,6 +37,6 @@ public class BoundballLauncher : Launcher
         newBoundball.damage = damage[levelNum - 1];
         newBoundball.transform.localScale = Vector3.one * scale[levelNum - 1];
         newBoundball.AddForce(player.GetDirVec() * 100);
-        newBoundball.AddForce(Vector2.up * 300);
+        newBoundball.AddForce(Vector2.up * 500);
     }
 }

@@ -3,6 +3,8 @@ using System.Collections;
 
 public class Boundball : ProjectileBase
 {
+    public AudioClip boundingSound;
+
     Rigidbody2D rgdBdy;
     Animator animator;
 
@@ -44,8 +46,13 @@ public class Boundball : ProjectileBase
             hittedCount++;
             animator.enabled = true;
 
+            BoundingSound();
             if (hittedCount == boundTime + 1)
+            {
                 Destroy(this.gameObject);
+                ShowEffect();
+                return;
+            }
         }
         else if(other.gameObject.GetComponent<Player>()!= null)
         {
@@ -53,11 +60,17 @@ public class Boundball : ProjectileBase
             {
                 other.gameObject.GetComponent<Player>().OnDamaged((int)damage, this);
                 Destroy(this.gameObject);
+                ShowEffect();
             }
         }
     }
 
-    void OnDestroy()
+    void BoundingSound()
+    {
+        GetComponent<AudioSource>().PlayOneShot(boundingSound);
+    }
+
+    void ShowEffect()
     {
         effectMgr.ShowEffect("Prefabs/Effect/Pop Effect", transform.position, Vector3.one);
     }

@@ -50,7 +50,6 @@ public class Boomerang : ProjectileBase
 
         float elaspedTime = 0f;
         float length = Mathf.Abs(endX - shootPos.x);
-        Debug.Log(endX);
         float speed = 10f;
         float moveTime = length / speed * 2;
         Vector3 startPos = transform.position;
@@ -117,7 +116,7 @@ public class Boomerang : ProjectileBase
             if(other.GetComponent<Player>() != shooter)
             {
                 other.GetComponent<Player>().OnDamaged((int)damage,this);
-                effectMgr.ShowEffect("Prefabs/Effect/Slash Effect", other.transform.position, new Vector3(1.3f, 1.3f, 1.3f));
+                effectMgr.ShowEffect("Prefabs/Effect/Big Slash Effect", other.transform.position, Vector3.one);
                 Destroy(this.gameObject);
             }
             else

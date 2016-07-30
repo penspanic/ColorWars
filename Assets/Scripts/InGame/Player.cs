@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     public Sprite green;
     public Sprite yellow;
     public Sprite purple;
+    public Sprite death;
     private SpriteRenderer spriteRenderer;
     private SpriteRenderer playerUIrenderer;
     Rigidbody2D rgdBdy;
@@ -37,6 +38,8 @@ public class Player : MonoBehaviour
         roundMgr = GameObject.FindObjectOfType<RoundManager>();
         effectMgr = GameObject.FindObjectOfType<EffectManager>();
         shotTransform = transform.FindChild("Shot Position");
+
+        effectMgr.ShowEffect("Prefabs/Effect/Appear Effect", transform.position, Vector3.one);
     }
 
     public void SetHpBar(HpBar hpBar)
@@ -160,6 +163,9 @@ public class Player : MonoBehaviour
 
     void ChangeColor()
     {
+        if (!roundMgr.roundProcessing)
+            return;
+
         spriteRenderer.sprite = GetSprite(tileMgr.GetColor(transform.position.x));
     }
 
@@ -247,8 +253,9 @@ public class Player : MonoBehaviour
     {
         if (!roundMgr.roundProcessing)
             return;
-
-        Debug.Log("Player Dead!");
+        spriteRenderer.sprite = death;
+        GetComponent<Rigidbody2D>().Sleep();
+        transform.Rotate(new Vector3(0, 0, 90), Space.World);
         roundMgr.PlayerDeath(this);
     }
 

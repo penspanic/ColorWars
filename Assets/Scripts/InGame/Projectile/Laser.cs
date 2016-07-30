@@ -40,6 +40,7 @@ public class Laser : ProjectileBase
             if(other.GetComponent<Player>() != shooter)
             {
                 other.GetComponent<Player>().OnDamaged((int)damage,this);
+                effectMgr.ShowEffect("Prefabs/Effect/Laser Hit Effect", other.transform.position, Vector3.one);
             }
         }
     }

@@ -7,6 +7,8 @@ public class RoundManager : MonoBehaviour
 {
     public GameObject readyPrefab;
     public GameObject fightPrefab;
+    public GameObject player1WinPrefab;
+    public GameObject player2WinPrefab;
 
     public HpBar player1HpBar;
     public HpBar player2HpBar;
@@ -21,6 +23,9 @@ public class RoundManager : MonoBehaviour
 
     TileManager tileMgr;
     InputManager inputMgr;
+    BgmManager bgmMgr;
+
+    RoundEndBlack roundEndBlack;
 
     public bool roundProcessing
     {
@@ -38,8 +43,10 @@ public class RoundManager : MonoBehaviour
     {
         tileMgr = GameObject.FindObjectOfType<TileManager>();
         inputMgr = GameObject.FindObjectOfType<InputManager>();
+        bgmMgr = GameObject.FindObjectOfType<BgmManager>();
 
-        CreatePlayer();
+        roundEndBlack = GameObject.FindObjectOfType<RoundEndBlack>();
+
         StartCoroutine(RoundStartProcess());
     }
 
@@ -49,8 +56,10 @@ public class RoundManager : MonoBehaviour
 
         Instantiate(readyPrefab);
 
+        yield return new WaitForSeconds(0.5f);
+        CreatePlayer();
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
 
         Instantiate(fightPrefab);
 
@@ -86,11 +95,14 @@ public class RoundManager : MonoBehaviour
 
     void PlayerWin(int playerNum)
     {
+        bgmMgr.Pause();
         roundProcessing = false;
         if (playerNum == 1)
         {
             player1Score++;
             player1ScoreUI.SetScore(player1Score);
+            Instantiate(player1WinPrefab);
+
             if(player1Score ==2)
             {
                 StartCoroutine(GameEndProcess(1));
@@ -101,6 +113,8 @@ public class RoundManager : MonoBehaviour
         {
             player2Score++;
             player2ScoreUI.SetScore(player2Score);
+            Instantiate(player2WinPrefab);
+
             if(player2Score == 2)
             {
                 StartCoroutine(GameEndProcess(2));
@@ -108,41 +122,39 @@ public class RoundManager : MonoBehaviour
             }
         }
 
-        Destroy(player1.gameObject);
-        Destroy(player2.gameObject);
+
         StartCoroutine(RoundEndProcess(playerNum));
     }
 
     IEnumerator RoundEndProcess(int winPlayerNum)
     {
-        
-        Debug.Log("Player " + winPlayerNum + " Win!");
+        roundEndBlack.FadeOut(0.5f, 0.5f);
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(3f);
 
         yield return StartCoroutine(SceneFader.Instance.FadeOut(1f));
+        roundEndBlack.SetAlpha(0);
+
         tileMgr.ShuffleTile();
-        CreatePlayer();
+
         roundImage.sprite = roundSprites[player1Score + player2Score];
 
-        Debug.Log("Round" + (player1Score + player2Score) + " Fight!");
-
+        Destroy(player1.gameObject);
+        Destroy(player2.gameObject);
         StartCoroutine(RoundStartProcess());
+
+        bgmMgr.UnPause();
     }
 
     IEnumerator GameEndProcess(int winPlayerNum)
     {
+        roundEndBlack.FadeOut(0.5f, 0.5f);
         roundProcessing = false;
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(3f);
 
         StartCoroutine(SceneFader.Instance.FadeOut(1f, "Main"));
-    }
-
-    void GameEnd(int winPlayerNum)
-    {
-        roundProcessing = false;
-        Debug.Break();
+        StartCoroutine(SceneFader.Instance.SoundFadeOut(1f, GameObject.FindObjectsOfType<AudioSource>()));
     }
 
     public Player GetPlayer(int number)
