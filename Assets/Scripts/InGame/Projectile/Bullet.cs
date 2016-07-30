@@ -45,8 +45,17 @@ public class Bullet : ProjectileBase
         transform.Translate(dirVec * moveSpeed * Time.deltaTime);
     }
 
-    void OnCollisionEnter2D(Collision2D other)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        OnDestroyed();
+        if(other.gameObject.GetComponent<Player>() != null)
+        {
+            if (other.gameObject.GetComponent<Player>() != shooter)
+                other.gameObject.GetComponent<Player>().OnDamaged((int)damage);
+        }
+
+        if(other.gameObject.CompareTag("Edge"))
+        {
+            OnDestroyed();
+        }
     }
 }

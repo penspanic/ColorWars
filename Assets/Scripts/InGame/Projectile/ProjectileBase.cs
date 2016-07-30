@@ -6,7 +6,7 @@ public abstract class ProjectileBase : MonoBehaviour
     public float moveSpeed;
     public float damage;
 
-    Player shooter;
+    protected Player shooter;
 
     protected virtual void Awake()
     {

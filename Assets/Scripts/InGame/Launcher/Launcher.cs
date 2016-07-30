@@ -5,14 +5,14 @@ public abstract class Launcher : MonoBehaviour
 {
     public float coolTime;
 
-    Player player1;
-    Player player2;
+    protected Player player1;
+    protected Player player2;
 
 
     bool canPlayer1Shot = true;
     bool canPlayer2Shot = true;
 
-    RoundManager roundMgr;
+    protected RoundManager roundMgr;
 
     protected virtual void Awake()
     {
@@ -30,23 +30,25 @@ public abstract class Launcher : MonoBehaviour
 
     }
 
+    protected bool CanShot(Player player)
+    {
+        if (player.GetNumber() == 1)
+            return canPlayer1Shot;
+        else
+            return canPlayer2Shot;
+    }
 
     public virtual void Shot(Player player,int levelNum)
     {
-        if(player1 == player)
-        {
-            canPlayer1Shot = false;
-        }
-        else // Player2
-        {
-            canPlayer2Shot = false;
-        }
 
-        StartCoroutine(ShotProcess(player));
     }
-    IEnumerator ShotProcess(Player player)
-    {
 
+    protected IEnumerator ShotProcess(Player player)
+    {
+        if (player.GetNumber() == 1)
+            canPlayer1Shot = false;
+        else
+            canPlayer2Shot = false;
 
         yield return new WaitForSeconds(coolTime);
 

@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 public class RoundManager : MonoBehaviour
 {
+
+    public HpBar player1HpBar;
+    public HpBar player2HpBar;
+
     List<Launcher> launcherList = new List<Launcher>();
 
     public bool roundProcessing
@@ -31,6 +35,8 @@ public class RoundManager : MonoBehaviour
         player1.SetNumber(1);
         player2.SetNumber(2);
 
+        player1.SetHpBar(player1HpBar);
+        player2.SetHpBar(player2HpBar);
     }
 
     public Player GetPlayer(int number)
@@ -39,6 +45,13 @@ public class RoundManager : MonoBehaviour
             return player1;
         else
             return player2;
+    }
+
+    public Player GetOppositePlayer(Player player)
+    {
+        if (player == player1)
+            return player2;
+        return player1;
     }
 
     void Update()

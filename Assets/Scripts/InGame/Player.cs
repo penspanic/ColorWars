@@ -4,6 +4,7 @@ using System.Collections;
 public class Player : MonoBehaviour
 {
 
+    public int fullHp;
     public float jumpPower;
     public float moveSpeed;
     public float maxSpeed;
@@ -17,7 +18,9 @@ public class Player : MonoBehaviour
     ProjectileManager projectileMgr;
     TileManager tileMgr;
     Transform shotTransform;
+    HpBar hpBar;
 
+    int hp;
     int playerNum;
 
     void Awake()
@@ -27,6 +30,11 @@ public class Player : MonoBehaviour
         projectileMgr = GameObject.FindObjectOfType<ProjectileManager>();
         tileMgr = GameObject.FindObjectOfType<TileManager>();
         shotTransform = transform.FindChild("Shot Position");
+    }
+
+    public void SetHpBar(HpBar hpBar)
+    {
+        this.hpBar = hpBar;
     }
 
     public void SetNumber(int num)
@@ -46,11 +54,22 @@ public class Player : MonoBehaviour
 
     public void LeftKey()
     {
+        if(GetDirVec() == Vector2.right)
+        {
+            ChangeDirection();
+        }
+
         rgdBdy.AddForce(Vector2.left * Time.deltaTime * moveSpeed);
     }
 
     public void RightKey()
     {
+
+        if(GetDirVec() == Vector2.left)
+        {
+            ChangeDirection();
+        }
+
         rgdBdy.AddForce(Vector2.right * Time.deltaTime * moveSpeed);
     }
 
@@ -64,16 +83,35 @@ public class Player : MonoBehaviour
         Shot();
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        DirectionChange();
+        YRotationChange();
         ChangeColor();
-
+        MaxVelocitySet();
     }
 
-    void DirectionChange()
+    void MaxVelocitySet()
     {
-        if (Mathf.Abs(rgdBdy.velocity.x) < 0.5f)
+        if (rgdBdy.velocity.x >= maxSpeed)
+        {
+            Vector3 newVel = rgdBdy.velocity;
+            newVel.x = maxSpeed;
+            rgdBdy.velocity = newVel;
+        }
+    }
+
+    void ChangeDirection()
+    {
+        Vector3 vel = rgdBdy.velocity;
+
+        vel.x = -vel.x;
+
+        rgdBdy.velocity = vel;
+    }
+
+    void YRotationChange()
+    {
+        if (Mathf.Abs(rgdBdy.velocity.x) < 0.1f)
             return;
 
         if (rgdBdy.velocity.x >= 0)
@@ -113,6 +151,20 @@ public class Player : MonoBehaviour
         tileMgr.Shot(this);
     }
 
+    public void OnDamaged(int damage)
+    {
+        hp -= damage;
+        hpBar.UpdateValue(hp / fullHp);
+
+        if (hp <= 0)
+            OnDeath();
+    }
+
+    void OnDeath()
+    {
+        Debug.Log("Player Dead!");
+    }
+
     Sprite GetSprite(string colorName)
     {
         switch(colorName)
@@ -133,7 +185,7 @@ public class Player : MonoBehaviour
 
     public Vector2 GetDirVec()
     {
-        if (rgdBdy.velocity.x >= 0)
+        if (transform.rotation.eulerAngles.y == 0)
             return Vector2.right;
         return Vector2.left;
     }
