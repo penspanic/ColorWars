@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
 
     public int fullHp;
     public float jumpPower;
+    public float maxJumpPower;
     public float moveSpeed;
     public float maxSpeed;
     public Sprite red;
@@ -14,27 +15,34 @@ public class Player : MonoBehaviour
     public Sprite yellow;
     public Sprite purple;
     private SpriteRenderer spriteRenderer;
+    private SpriteRenderer playerUIrenderer;
     Rigidbody2D rgdBdy;
-    ProjectileManager projectileMgr;
     TileManager tileMgr;
+    RoundManager roundMgr;
+    EffectManager effectMgr;
     Transform shotTransform;
     HpBar hpBar;
 
     int hp;
     int playerNum;
+    bool canMove = true;
 
     void Awake()
     {
+        hp = fullHp;
         rgdBdy = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        projectileMgr = GameObject.FindObjectOfType<ProjectileManager>();
+        playerUIrenderer = transform.FindChild("Player UI").GetComponent<SpriteRenderer>();
         tileMgr = GameObject.FindObjectOfType<TileManager>();
+        roundMgr = GameObject.FindObjectOfType<RoundManager>();
+        effectMgr = GameObject.FindObjectOfType<EffectManager>();
         shotTransform = transform.FindChild("Shot Position");
     }
 
     public void SetHpBar(HpBar hpBar)
     {
         this.hpBar = hpBar;
+        hpBar.UpdateValue(1f);
     }
 
     public void SetNumber(int num)
@@ -54,16 +62,27 @@ public class Player : MonoBehaviour
 
     public void LeftKey()
     {
+
+        if (!canMove)
+            return;
+
         if(GetDirVec() == Vector2.right)
         {
             ChangeDirection();
         }
 
         rgdBdy.AddForce(Vector2.left * Time.deltaTime * moveSpeed);
+        if(Mathf.Abs(rgdBdy.velocity.x) <= maxSpeed/2)
+        {
+            rgdBdy.velocity = new Vector2(-maxSpeed / 2, rgdBdy.velocity.y);
+        }
     }
 
     public void RightKey()
     {
+
+        if (!canMove)
+            return;
 
         if(GetDirVec() == Vector2.left)
         {
@@ -71,23 +90,39 @@ public class Player : MonoBehaviour
         }
 
         rgdBdy.AddForce(Vector2.right * Time.deltaTime * moveSpeed);
+        if (Mathf.Abs(rgdBdy.velocity.x) <= maxSpeed / 2)
+        {
+            rgdBdy.velocity = new Vector2(maxSpeed / 2, rgdBdy.velocity.y);
+        }
     }
 
     public void JumpKeyDown()
     {
-        Jump();
+        if (!canMove)
+            return;
+
+        performJump = true;
     }
 
     public void ShotKeyDown()
     {
+        if (!canMove)
+            return;
+
         Shot();
     }
 
+    bool performJump = false;
     void FixedUpdate()
     {
         YRotationChange();
         ChangeColor();
         MaxVelocitySet();
+
+        if (performJump)
+        {
+            Jump();
+        }
     }
 
     void MaxVelocitySet()
@@ -121,6 +156,7 @@ public class Player : MonoBehaviour
         else
             transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
     }
+        
 
     void ChangeColor()
     {
@@ -131,19 +167,20 @@ public class Player : MonoBehaviour
 
     void Jump()
     {
+        performJump = false;
         if (jumpCount == 3)
             return;
+        rgdBdy.velocity = new Vector2(rgdBdy.velocity.x, 0);
 
-        rgdBdy.AddForce(Vector2.up * jumpPower);
+        rgdBdy.AddForce(new Vector2(0, jumpPower));
         jumpCount++;
-    }
 
-    void OnCollisionEnter2D(Collision2D other)
-    {
-        if(other.gameObject.name == "Bottom")
-        {
-            jumpCount = 0;
-        }
+        if (jumpCount == 2)
+            effectMgr.ShowEffect("Prefabs/Effect/Double Jump Effect", transform.position,Vector3.one);
+        else if (jumpCount == 3)
+            effectMgr.ShowEffect("Prefabs/Effect/Triple Jump Effect", transform.position,Vector3.one);
+
+
     }
 
     void Shot()
@@ -151,18 +188,68 @@ public class Player : MonoBehaviour
         tileMgr.Shot(this);
     }
 
-    public void OnDamaged(int damage)
+    bool unbeatable = false;
+    public void OnDamaged(int damage, ProjectileBase projectile)
     {
+        if (unbeatable)
+            return;
+
+
         hp -= damage;
-        hpBar.UpdateValue(hp / fullHp);
+        hpBar.UpdateValue((float)hp / (float)fullHp);
+        hpBar.ShowHurt();
+        StartCoroutine(DamagedProcess(projectile));
+        StartCoroutine(TwinkleProcess());
 
         if (hp <= 0)
             OnDeath();
     }
 
+    void Collision(ProjectileBase projectile)
+    {
+        Vector2 dirVec = transform.position - projectile.transform.position;
+        dirVec.Normalize();
+
+        rgdBdy.AddForce(dirVec * 200);
+        rgdBdy.AddForce(Vector2.up * 250);
+    }
+
+    IEnumerator DamagedProcess(ProjectileBase projectile)
+    {
+        unbeatable = true;
+
+        canMove = false;
+        rgdBdy.velocity = Vector3.zero;
+
+        Collision(projectile);
+
+        yield return new WaitForSeconds(0.5f);
+
+        canMove = true;
+
+        yield return new WaitForSeconds(0.5f);
+
+        unbeatable = false;
+    }
+
+    IEnumerator TwinkleProcess()
+    {
+        for(int i = 0;i<5;++i)
+        {
+            spriteRenderer.enabled = false;
+            yield return new WaitForSeconds(0.1f);
+            spriteRenderer.enabled = true;
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
     void OnDeath()
     {
+        if (!roundMgr.roundProcessing)
+            return;
+
         Debug.Log("Player Dead!");
+        roundMgr.PlayerDeath(this);
     }
 
     Sprite GetSprite(string colorName)
@@ -188,5 +275,21 @@ public class Player : MonoBehaviour
         if (transform.rotation.eulerAngles.y == 0)
             return Vector2.right;
         return Vector2.left;
+    }
+    void OnCollisionEnter2D(Collision2D other)
+    {
+
+        if(other.gameObject.name == "Left" || other.gameObject.name == "Right")
+        {
+            if (jumpCount > 0)
+                jumpCount--;
+        }
+
+        if(other.gameObject.name == "Bottom")
+        {
+            jumpCount = 0;
+
+            effectMgr.ShowEffect("Prefabs/Effect/Landing Effect", transform.position + new Vector3(0,0.4f,0),Vector3.one);
+        }
     }
 }

@@ -13,8 +13,9 @@ public class TileManager : MonoBehaviour
         ShuffleTile();
     }
 
-    void ShuffleTile()
+    public void ShuffleTile()
     {
+        tileList.Clear();
         tileList.AddRange(tiles);
         System.Random rnd = new System.Random();
 
@@ -33,7 +34,7 @@ public class TileManager : MonoBehaviour
 
         for (int i = 0; i < tileList.Count; ++i)
         {
-            tileList[i].transform.position = new Vector3(startPosX + xInterval * i, 0, 0);
+            tileList[i].transform.position = new Vector3(startPosX + xInterval * i, 0, 2);
         }
     }
 

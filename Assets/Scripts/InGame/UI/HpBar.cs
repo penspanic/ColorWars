@@ -16,43 +16,57 @@ public class HpBar : MonoBehaviour
         hpBarImage = GetComponent<Image>();
     }
 
+    //public void UpdateValue(float value)
+    //{
+    //    realValue = value;
+    //}
+
+
+    //void Update()
+    //{
+    //    hpBarImage.fillAmount = realValue;
+    //}
+
     public void UpdateValue(float value)
     {
-
-        if (isChanging)
-        {
-            realValue = value;
-            StopAllCoroutines();
-            StartCoroutine(ValueChange(visibleValue, realValue));
-        }
-        else
-        {
-            StartCoroutine(ValueChange(realValue, value));
-            realValue = value;
-        }
+        realValue = value;
+        changing = true;
     }
 
 
-    IEnumerator ValueChange(float startValue, float endValue)
-    {
-        isChanging = true;
-        float elaspedTime = 0f;
-        float changeTime = 1f;
-
-        while(elaspedTime < changeTime)
-        {
-            elaspedTime += Time.deltaTime;
-            // 0.6 -> 0.3
-            visibleValue = 1f - EasingUtil.easeInQuad(1f - startValue, 1f - endValue, elaspedTime / changeTime);
-
-            yield return null;
-        }
-
-        isChanging = false;
-    }
-
+    bool changing = false;
+    float elapsedTime = 0f;
     void Update()
     {
+        if (changing)
+            elapsedTime += Time.deltaTime;
+        visibleValue = EasingUtil.linear(visibleValue, realValue, elapsedTime);
+
         hpBarImage.fillAmount = visibleValue;
+
+        if (elapsedTime >= 1f)
+        {
+            elapsedTime = 0f;
+            changing = false;
+        }
+    }
+
+    public void ShowHurt()
+    {
+        StartCoroutine(RedColorProcess());
+    }
+
+    IEnumerator RedColorProcess()
+    {
+        for (int i = 0; i < 3; ++i)
+        {
+            hpBarImage.color = Color.red;
+
+            yield return new WaitForSeconds(0.1f);
+
+            hpBarImage.color = Color.white;
+
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 }

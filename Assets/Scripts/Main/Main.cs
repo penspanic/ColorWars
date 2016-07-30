@@ -4,11 +4,17 @@ using System.Collections;
 public class Main : MonoBehaviour
 {
 
-    bool isChanging = false;
+    bool isChanging = true;
 
     void Awake()
     {
+        StartCoroutine(SceneFader.Instance.FadeIn(1f));
+        Invoke("FadeInEnd", 1f);
+    }
 
+    void FadeInEnd()
+    {
+        isChanging = false;
     }
 
     public void OnStartButtonDown()

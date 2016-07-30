@@ -42,18 +42,23 @@ public class Bullet : ProjectileBase
     {
         base.Update();
 
-        transform.Translate(dirVec * moveSpeed * Time.deltaTime);
+        transform.Translate(dirVec * moveSpeed * Time.deltaTime, Space.World);
+        transform.Rotate(new Vector3(0, 0, 720) * Time.deltaTime);
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.gameObject.GetComponent<Player>() != null)
+        Debug.Log(other);
+        if (other.gameObject.GetComponent<Player>() != null)
         {
             if (other.gameObject.GetComponent<Player>() != shooter)
-                other.gameObject.GetComponent<Player>().OnDamaged((int)damage);
+            {
+                other.gameObject.GetComponent<Player>().OnDamaged((int)damage, this);
+                effectMgr.ShowEffect("Prefabs/Effect/Slash Effect", other.transform.position, new Vector3(0.7f,0.7f,0.7f));
+            }
         }
 
-        if(other.gameObject.CompareTag("Edge"))
+        if (other.gameObject.CompareTag("Edge"))
         {
             OnDestroyed();
         }

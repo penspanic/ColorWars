@@ -14,10 +14,10 @@ public class InputManager : MonoBehaviour
         roundMgr = GameObject.FindObjectOfType<RoundManager>();
     }
 
-    void Start()
+    public void SetPlayer(Player player1, Player player2)
     {
-        player1 = roundMgr.GetPlayer(1);
-        player2 = roundMgr.GetPlayer(2);
+        this.player1 = player1;
+        this.player2 = player2;
     }
 
     void Update()
