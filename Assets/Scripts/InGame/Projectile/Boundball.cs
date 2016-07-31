@@ -7,6 +7,7 @@ public class Boundball : ProjectileBase
 
     Rigidbody2D rgdBdy;
     Animator animator;
+    RoundManager roundMgr;
 
     int hittedCount = 0;
     int boundTime;
@@ -15,12 +16,19 @@ public class Boundball : ProjectileBase
         base.Awake();
         rgdBdy = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        roundMgr = GameObject.FindObjectOfType<RoundManager>();
     }
 
 
     protected override void Update()
     {
         base.Update();
+
+        if(!roundMgr.roundProcessing)
+        {
+            Destroy(this.gameObject);
+            ShowEffect();
+        }
     }
 
     public void SetBoundTime(int boundTime)

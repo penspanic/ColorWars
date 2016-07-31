@@ -7,6 +7,7 @@ public class MissileLauncher : Launcher
     public float[] duration;
     public int[] damage;
     public float[] speed;
+    public Vector3[] size;
 
 
     public GameObject missilePrefab;
@@ -35,6 +36,7 @@ public class MissileLauncher : Launcher
 
         newMissile.SetTarget(roundMgr.GetOppositePlayer(player));
         newMissile.SetData(duration[levelNum - 1], damage[levelNum - 1], speed[levelNum - 1]);
+        newMissile.transform.localScale = size[levelNum - 1];
         newMissile.SetPos(player.transform.position);
 
         newMissile.Follow();

@@ -52,7 +52,6 @@ public class BoomerangLauncher : Launcher
 
         float elaspedTime = 0f;
         float length = Mathf.Abs(endX - shootPos.x);
-        Debug.Log(endX);
         float speed = 10f;
         float moveTime = length / speed * 2;
         Vector3 startPos = boomerang.transform.position;

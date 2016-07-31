@@ -9,7 +9,8 @@ public class Sample : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	
+	void Update ()
+    {
+        transform.Translate(Input.GetAxis("Horizontal1") * Vector3.right);
 	}
 }

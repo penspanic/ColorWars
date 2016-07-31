@@ -10,6 +10,7 @@ public class Main : MonoBehaviour
 
     void Awake()
     {
+        Time.timeScale = 1f;
         selectableButtons = GameObject.FindObjectOfType<SeletableButtons>();
 
         StartCoroutine(SceneFader.Instance.FadeIn(1f));

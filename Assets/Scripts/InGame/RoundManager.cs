@@ -56,7 +56,6 @@ public class RoundManager : MonoBehaviour
 
         Instantiate(readyPrefab);
 
-        yield return new WaitForSeconds(0.5f);
         CreatePlayer();
 
         yield return new WaitForSeconds(2f);

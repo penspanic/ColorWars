@@ -17,6 +17,12 @@ public class Credit : MonoBehaviour
         isChanging = false;
     }
 
+    void Update()
+    {
+        if (Input.anyKeyDown)
+            BackToMain();
+    }
+
     public void BackToMain()
     {
         if (isChanging)

@@ -27,27 +27,30 @@ public class SeletableButtons : MonoBehaviour
     }
 
     int prevIndex = 0;
+    bool canMove = true;
     void Update()
     {
         prevIndex = currIndex;
-        if(Input.GetKeyDown(KeyCode.UpArrow))
+        if(Input.GetAxis("Vertical") >0 && canMove)
         {
             if (currIndex == 0)
                 return;
+            canMove = false;
             currIndex--;
             audioSource.PlayOneShot(changeSound);
             
         }
 
-        if(Input.GetKeyDown(KeyCode.DownArrow))
+        if(Input.GetAxis("Vertical") < 0 && canMove)
         {
             if (currIndex == 2)
                 return;
+            canMove = false;
             currIndex++;
             audioSource.PlayOneShot(changeSound);
         }
 
-        if(Input.GetKeyDown(KeyCode.Return))
+        if(Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.JoystickButton0))
         {
             actions[currIndex]();
             audioSource.PlayOneShot(enterSound);
@@ -58,6 +61,9 @@ public class SeletableButtons : MonoBehaviour
 
         //buttons[currIndex].image.SetNativeSize();
         //buttons[prevIndex].image.SetNativeSize();
+
+        if (Input.GetAxis("Vertical") == 0)
+            canMove = true;
     }
 
     public void AddEvent(int index, System.Action action)
